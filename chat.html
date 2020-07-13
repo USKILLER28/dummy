@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ChatRoom</title>
+	<style>
+		*{margin:0; padding: 0;}
+		#container{
+			width:500px ;
+			height:800px ;
+			border: 1px solid black;
+			margin: 0 auto;
+
+		}
+
+		#ChatRoom{
+
+			width: 700px;
+			height: 500px;
+			background-color: skyblue;
+			overflow-y: scroll;
+
+		}
+
+		#msgHolder{
+			width:700px;
+			height:100px ;
+			background-color:orange;
+
+			display:flex;
+			justify-content: center;
+			align-items: center;
+
+		}
+
+		.chat{
+			min-width: 300px;
+			float: left;
+			width: auto;
+			height: auto;
+			min-height: 100px;
+
+			background-color: red;
+			padding: 15px;
+			box-sizing: border-box;
+			border-radius: 10px;
+			margin: 15px 10px;
+		}
+		.owner{
+			min-width: 300px;
+			width: auto;
+			height: auto;
+			min-height: 100px;
+			float: right;
+
+			background-color: white;
+			padding: 15px;
+			box-sizing: border-box;
+			border-radius: 10px;
+			margin: 15px 10px;
+
+		}
+
+
+	</style>
+</head>
+<body>
+<div id="container">
+	<div id="ChatRoom">
+
+	</div>
+	<div id="msgHolder">
+		<input id="name" type="text" placeholder="your name" />
+		<input id="msg" type="text" placeholder="yourmessage" />
+		<button onclick="sendMsg()">Send</button>
+	</div>
+
+
+</div>
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-database.js"></script>
+
+<script>
+	var firebaseConfig = {
+    apiKey: "AIzaSyAS9KYvgnFgjming1JlKxUWujO5zSc3G_E",
+    authDomain: "chatroom-5cae3.firebaseapp.com",
+    databaseURL: "https://chatroom-5cae3.firebaseio.com",
+    projectId: "chatroom-5cae3",
+    storageBucket: "chatroom-5cae3.appspot.com",
+    messagingSenderId: "1042078207188",
+    appId: "1:1042078207188:web:fc9a871af016d35f217f41"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+
+
+
+
+
+	var nameInput = document.getElementById("name");
+	var msgInput = document.getElementById("msg");
+
+
+	function sendMsg(){
+		console.log("send Button click");
+		console.log(nameInput.value);
+		console.log(msgInput.value);
+
+
+		firebase.database().ref().child('chatRoom').push({
+			name: nameInput.value,
+			maessage: msgInput.value,
+		})
+
+		nameInput.value = "";
+
+		msgInput.value = "";
+	}
+
+
+
+	//get the database, where is the database, in firebase
+	firebase.database().ref().child("chatRoom").on('child_added', function(snapshot){
+		var data = snapshot.val();
+		console.log(data.maessage);
+
+
+		var chat = document.createElement('div');
+		chat.className = "chat";
+
+		if (data.name === "Sonam") {
+			chat.className = "owner";
+		}else{
+			chat.className = "chat";
+		}
+
+
+		var nameP = document.createElement('p');
+		var msgP = document.createElement('p');
+
+
+		nameP.innerHTML = data.name;
+		msgP.innerHTML = data.maessage;
+
+		chat.appendChild(nameP);
+		chat.appendChild(msgP);
+
+
+		var br = document.createElement('br');
+
+		//append chat dic to chat oom
+
+		document.getElementById("ChatRoom").appendChild(chat);
+				document.getElementById("ChatRoom").appendChild(br);
+
+
+
+		//chatroom scrolltOP
+		document.getElementById("ChatRoom").scrollTop = document.getElementById("ChatRoom").scrollHeight;
+	})
+
+	document.addEventListener("keydown", function(evt){
+		console.log(evt.keyCode);
+		if(evt.keyCode === 13){
+
+			sendMsg();
+
+		}
+	})
+</script>
+</body>
+</html>
